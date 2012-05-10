@@ -25,3 +25,7 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+# test, generated data, etc
+aimeeble/blog/
+aimeeble/blogy.db
