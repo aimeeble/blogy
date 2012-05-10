@@ -130,6 +130,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'blogy',
 )
 
 # A sample logging configuration. The only tangible logging
