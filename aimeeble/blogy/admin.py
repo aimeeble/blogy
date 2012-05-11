@@ -17,12 +17,18 @@ class EntryAdmin(admin.ModelAdmin):
             "classes": ["collapse"],
          }),
       ]
-   list_display = ("title", "is_future_post")
+   list_display = ("title", "posted", "modified", "posted_by", "get_tags")
    prepopulated_fields = {
          "slug": ["title"],
       }
 
    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+      """Defaults posted-by field to the logged in user.
+
+      Pre-populates the foreign-key field for posted-by to be set to the
+      currently logged in user.
+
+      """
       if db_field.name == 'posted_by':
          kwargs["initial"] = request.user.id
          return db_field.formfield(**kwargs)

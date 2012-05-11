@@ -36,12 +36,19 @@ class Entry(models.Model):
    # random tags we are tagged with
    tags = models.ManyToManyField('Tag', blank=True)
 
-   def save(self, *args, **kwargs):
-      self.slug = slugify(self.title)
-      super(Entry, self).save(*args, **kwargs)
+   def posted(self):
+      """Returns true if this has been posted (false = future post).
+      """
+      return self.post <= timezone.now()
+   posted.admin_order_field = 'post'
+   posted.boolean = True
+   posted.short_description = 'Posted'
 
-   def is_future_post(self):
-      return self.post > timezone.now()
+   def get_tags(self):
+      """Returns a comma-separated list of tags for this post.
+      """
+      return ", ".join([t.name for t in self.tags.all()])
+   get_tags.short_description = 'Tags'
 
    def __unicode__(self):
       return "%s (post %s)" % (self.title, str(self.post))
