@@ -1,3 +1,4 @@
+from blogy.models import Entry
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.db.models.signals import pre_delete
@@ -6,13 +7,11 @@ from django.dispatch import receiver
 from django.template import Context
 from django.template import loader
 from django.utils import timezone
-
-from blogy.models import Entry
 from markdown import Markdown
 import os
 
 
-def generate_index_page():
+def generate_static_index():
    print "Generating new index..."
 
    entry_list = Entry.objects.all().order_by("-post")
@@ -63,15 +62,14 @@ def delete_static_file(entry):
       print "failure: %s" % (str(e))
 
 
-@receiver(pre_save, sender=Entry)
-def pre_save_handler(sender, instance, **kwargs):
-   """Cleans up generated files pre-save.
+def cleanup_static_content(instance):
+   """Cleans up generated files.
 
-   Pre-save, we delete the static HTML file if it already exists.  This does
-   two main things, 1) if the slug changes, this ensures the old file is
-   removed before we re-generate into the new slug file, and 2) handles hiding
-   a HTML file if the post-date has been changed to be in the future (invisible
-   until the date specified).
+   Delete the static HTML file if it already exists.  This does two main
+   things, 1) if the slug changes, this ensures the old file is removed before
+   we re-generate into the new slug file, and 2) handles hiding a HTML file if
+   the post-date has been changed to be in the future (invisible until the date
+   specified).
 
    """
    if not instance.id:
@@ -80,14 +78,12 @@ def pre_save_handler(sender, instance, **kwargs):
    delete_static_file(old)
 
 
-@receiver(post_save, sender=Entry)
-def post_save_handler(sender, instance, **kwargs):
+def generate_static_content(instance):
    """Generate the static HTML file for an entry.
 
-   After the bookkeeping data is saved to the database, this will create the
-   static HTML file which represents the post itself.  The instance's markdown
-   source is converted into HTML and sandwiched with the template head/foot
-   then saved to a URL based upon the instance's slug.
+   This will create the static HTML file which represents the post itself.  The
+   instance's markdown source is converted into HTML and sandwiched with the
+   template head/foot then saved to a URL based upon the instance's slug.
 
    """
    if not instance.posted():
@@ -110,19 +106,20 @@ def post_save_handler(sender, instance, **kwargs):
       f.write(full_html)
    print "saving %s to %s ->\n%s" % (instance.title, abs_filename, full_html)
 
-   generate_index_page()
+
+@receiver(post_save, sender=Entry)
+def post_save_handler(sender, instance, **kwargs):
+   generate_static_content(instance)
+   generate_static_index()
+
+
+@receiver(pre_save, sender=Entry)
+def pre_save_handler(sender, instance, **kwargs):
+   cleanup_static_content(instance)
+   generate_static_index()
 
 
 @receiver(pre_delete, sender=Entry)
 def delete_handler(sender, instance, **kwargs):
-   """Cleanup static HTML for a deleted post.
-
-   Before we remove our bookkeeping data, delete the static file.  Should the
-   delete fail, re-saving we re-generate the file we delete here.
-
-   """
    delete_static_file(instance)
-
-
-def setup_signals():
-   pass
+   generate_static_index()

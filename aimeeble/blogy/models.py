@@ -52,4 +52,3 @@ class Entry(models.Model):
 
    def __unicode__(self):
       return "%s (post %s)" % (self.title, str(self.post))
-
