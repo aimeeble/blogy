@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<html>
+<head>
+  <meta name="generator" content="HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 15.6), see www.w3.org">
+
+  <title>Aimee's Blog</title>
+</head>
+
+<body>
+   <ul>
+      {% for entry in entry_list %}
+      <li><a href="{{ STATIC_URL }}/static/{{ entry.post|date:"Y/m/d" }}/{{ entry.slug }}.html">{{ entry.title }}</a> -- {{ entry.post }}</li>
+      {% endfor %}
+   </ul>
+</body>
+</html>

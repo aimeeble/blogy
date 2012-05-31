@@ -12,6 +12,22 @@ from markdown import Markdown
 import os
 
 
+def generate_index_page():
+   print "Generating new index..."
+
+   entry_list = Entry.objects.all().order_by("-post")
+
+   t = loader.get_template("index.html")
+   c = Context({
+      "entry_list": entry_list,
+   })
+   full_html = t.render(c)
+
+   abs_filename = os.path.join(settings.MEDIA_ROOT, "blog", "index.html")
+   with open(abs_filename, "w+") as f:
+      f.write(full_html)
+
+
 def get_static_filename(entry):
    """Gets the absolute filename of the entry's static HTML file.
 
@@ -81,7 +97,7 @@ def post_save_handler(sender, instance, **kwargs):
    md = Markdown()
    post_html = md.convert(instance.markdown)
 
-   t = loader.get_template("blogy/entry.html")
+   t = loader.get_template("entry.html")
    c = Context({
       "post_title": instance.title,
       "post_body": post_html,
@@ -93,6 +109,8 @@ def post_save_handler(sender, instance, **kwargs):
    with open(abs_filename, "w+") as f:
       f.write(full_html)
    print "saving %s to %s ->\n%s" % (instance.title, abs_filename, full_html)
+
+   generate_index_page()
 
 
 @receiver(pre_delete, sender=Entry)
