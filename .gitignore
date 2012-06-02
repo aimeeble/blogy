@@ -29,3 +29,7 @@ pip-log.txt
 # test, generated data, etc
 aimeeble/blog/
 aimeeble/blogy.db
+
+# Celery daya
+celerybeat-schedule
+djcelery.schedules.DatabaseScheduler
