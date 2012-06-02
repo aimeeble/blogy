@@ -5,12 +5,11 @@ from django.template import loader
 from django.utils import timezone
 from markdown import Markdown
 import os
+from django.template.defaultfilters import slugify
 
 
-def generate_static_index():
+def _generate_static_index(entry_list, filename):
    print "Generating new index..."
-
-   entry_list = Entry.objects.all().order_by("-post")
 
    t = loader.get_template("index.html")
    c = Context({
@@ -18,9 +17,21 @@ def generate_static_index():
    })
    full_html = t.render(c)
 
-   abs_filename = os.path.join(settings.MEDIA_ROOT, "blog", "index.html")
-   with open(abs_filename, "w+") as f:
+   with open(filename, "w+") as f:
       f.write(full_html)
+
+
+def generate_static_index():
+   entry_list = Entry.objects.all().order_by("-post")
+   abs_filename = os.path.join(settings.MEDIA_ROOT, "blog", "index.html")
+   _generate_static_index(entry_list, abs_filename)
+
+
+def generate_static_tag_index(tag_name):
+   entry_list = Entry.objects.filter(tags__name=tag_name).order_by("-post")
+   slugged_tag_name = slugify(tag_name)
+   abs_filename = os.path.join(settings.MEDIA_ROOT, "blog", "%s.html" % slugged_tag_name)
+   _generate_static_index(entry_list, abs_filename)
 
 
 def get_static_filename(entry):

@@ -3,11 +3,12 @@ from blogy.models import Entry
 from blogy.process import get_static_filename
 from blogy.process import generate_static_content
 from blogy.process import generate_static_index
+from blogy.process import generate_static_tag_index
 from django.utils import timezone
 import os
 
 
-@task
+@task(ignore_results=True)
 def process_pending_posts():
    """Task to process next post.
 
@@ -24,3 +25,5 @@ def process_pending_posts():
          print "processing '%s'" % (entry.slug)
          generate_static_content(entry)
          generate_static_index()
+         for tag in entry.tags.iterator():
+            generate_static_tag_index(tag.name)
