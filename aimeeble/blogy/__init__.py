@@ -1,1 +1,1 @@
-import blogy.process
+import blogy.hooks

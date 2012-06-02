@@ -1,9 +1,5 @@
 from blogy.models import Entry
 from django.conf import settings
-from django.db.models.signals import post_save
-from django.db.models.signals import pre_delete
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.template import Context
 from django.template import loader
 from django.utils import timezone
@@ -105,20 +101,3 @@ def generate_static_content(instance):
    with open(abs_filename, "w+") as f:
       f.write(full_html)
    print "saving %s to %s ->\n%s" % (instance.title, abs_filename, full_html)
-
-
-@receiver(post_save, sender=Entry)
-def post_save_handler(sender, instance, **kwargs):
-   generate_static_content(instance)
-   generate_static_index()
-
-
-@receiver(pre_save, sender=Entry)
-def pre_save_handler(sender, instance, **kwargs):
-   cleanup_static_content(instance)
-
-
-@receiver(pre_delete, sender=Entry)
-def delete_handler(sender, instance, **kwargs):
-   delete_static_file(instance)
-   generate_static_index()
