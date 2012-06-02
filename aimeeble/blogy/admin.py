@@ -17,7 +17,7 @@ class EntryAdmin(admin.ModelAdmin):
             "classes": ["collapse"],
          }),
       ]
-   list_display = ("title", "posted", "modified", "posted_by", "get_tags")
+   list_display = ("title", "posted", "post", "posted_by", "get_tags")
    prepopulated_fields = {
          "slug": ["title"],
       }
