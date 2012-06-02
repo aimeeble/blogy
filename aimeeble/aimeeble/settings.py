@@ -1,12 +1,25 @@
 import os
+import djcelery
+from datetime import timedelta
 
 APP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
-# Django settings for aimeeble project.
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+
+# Celery settings
+djcelery.setup_loader()
+
+CELERYBEAT_SCHEDULE = {
+   "publish-articles": {
+      "task": "blogy.tasks.process_pending_posts",
+      "schedule": timedelta(minutes=1),
+      "args": None,
+   },
+}
+
+
+# Django settings for aimeeble project.
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -58,10 +71,6 @@ MEDIA_ROOT = ''
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = ''
-
-ABSOLUTE_URL_OVERRIDES = {
-      "blogy.Entry": lambda o: "/blog/%s" % o.slug,
-   }
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -130,6 +139,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'blogy',
+    'djcelery',
 )
 
 # A sample logging configuration. The only tangible logging

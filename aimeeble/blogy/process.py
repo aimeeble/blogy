@@ -116,7 +116,6 @@ def post_save_handler(sender, instance, **kwargs):
 @receiver(pre_save, sender=Entry)
 def pre_save_handler(sender, instance, **kwargs):
    cleanup_static_content(instance)
-   generate_static_index()
 
 
 @receiver(pre_delete, sender=Entry)
