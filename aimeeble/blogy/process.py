@@ -9,7 +9,7 @@ from django.template.defaultfilters import slugify
 
 
 def _generate_static_index(entry_list, filename):
-   print "Generating new index..."
+   print "Generating %s" % (filename)
 
    t = loader.get_template("index.html")
    c = Context({
@@ -111,4 +111,4 @@ def generate_static_content(instance):
 
    with open(abs_filename, "w+") as f:
       f.write(full_html)
-   print "saving %s to %s ->\n%s" % (instance.title, abs_filename, full_html)
+   print "Generating %s" % (abs_filename)
