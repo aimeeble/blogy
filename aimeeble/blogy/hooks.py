@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models.signals import pre_delete
 from django.db.models.signals import pre_save
+from django.db.models.signals import m2m_changed
 from blogy.tasks import process_pending_posts_task
 from blogy.tasks import generate_main_index_task
 from blogy.tasks import generate_tag_index_task
@@ -29,3 +30,14 @@ def entry_delete_handler(sender, instance, **kwargs):
    tags = map(lambda x: x.name, instance.tags.all())
    generate_tag_index_task.delay(tags)
 
+
+@receiver(m2m_changed, sender=Entry.tags.through)
+def tag_post_save_handler(sender, instance, action, **kwargs):
+   if action == "post_add":
+      tags = map(lambda x: x.name, instance.tags.all())
+      if tags:
+         generate_tag_index_task.delay(tags)
+   elif action == "pre_clear":
+      tags = map(lambda x: x.name, instance.tags.all())
+      if tags:
+         generate_tag_index_task.delay(tags)
