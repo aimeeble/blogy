@@ -12,7 +12,7 @@ djcelery.setup_loader()
 
 CELERYBEAT_SCHEDULE = {
    "publish-articles": {
-      "task": "blogy.tasks.process_pending_posts",
+      "task": "blogy.tasks.process_pending_posts_task",
       "schedule": timedelta(minutes=1),
       "args": None,
    },

@@ -1,5 +1,6 @@
 from celery.task import task
 from blogy.models import Entry
+from blogy.models import Tag
 from blogy.process import get_static_filename
 from blogy.process import generate_static_content
 from blogy.process import generate_static_index
@@ -9,7 +10,7 @@ import os
 
 
 @task(ignore_results=True)
-def process_pending_posts():
+def process_pending_posts_task():
    """Task to process next post.
 
    This will be run in time for processing the next pending post.  Processing
@@ -24,6 +25,26 @@ def process_pending_posts():
       if not os.path.exists(filename):
          print "processing '%s'" % (entry.slug)
          generate_static_content(entry)
-         generate_static_index()
-         for tag in entry.tags.iterator():
-            generate_static_tag_index(tag.name)
+
+
+@task(ignore_results=True)
+def generate_main_index_task():
+   """Task to re-generate the main index.
+
+   """
+   print "Generating indexes..."
+   generate_static_index()
+
+
+@task(ignore_results=True)
+def generate_tag_index_task(tags=None):
+   """Task to re-generate tag indexes.
+
+   If tags is specified, only generate indexes for those those tags.
+   Otherwise, generate a new index for all tags.
+   """
+   if not tags:
+      tags = map(lambda x: x.name, Tag.objects.all())
+   print "Generating indexes for %s..." % (", ".join(tags))
+   for tag in tags:
+      generate_static_tag_index(tag)

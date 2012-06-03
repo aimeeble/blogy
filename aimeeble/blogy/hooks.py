@@ -3,25 +3,29 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models.signals import pre_delete
 from django.db.models.signals import pre_save
-from blogy.tasks import process_pending_posts
-
-from blogy.process import generate_static_index
+from blogy.tasks import process_pending_posts_task
+from blogy.tasks import generate_main_index_task
+from blogy.tasks import generate_tag_index_task
 from blogy.process import cleanup_static_content
 from blogy.process import delete_static_file
 
 
 @receiver(post_save, sender=Entry)
-def post_save_handler(sender, instance, **kwargs):
+def entry_post_save_handler(sender, instance, **kwargs):
    # Handle this asyncly via a Celery task
-   process_pending_posts.delay()
+   process_pending_posts_task.delay()
+   generate_main_index_task.delay()
 
 
 @receiver(pre_save, sender=Entry)
-def pre_save_handler(sender, instance, **kwargs):
+def entry_pre_save_handler(sender, instance, **kwargs):
    cleanup_static_content(instance)
 
 
 @receiver(pre_delete, sender=Entry)
-def delete_handler(sender, instance, **kwargs):
+def entry_delete_handler(sender, instance, **kwargs):
    delete_static_file(instance)
-   generate_static_index()
+   generate_main_index_task.delay()
+   tags = map(lambda x: x.name, instance.tags.all())
+   generate_tag_index_task.delay(tags)
+
