@@ -1,11 +1,22 @@
 <div id="sidebar_div">
-  <div id="search_div">
-    <label for="query">Search:</label>
-    <input id="query" name="q" type="text" />
-  </div>
   <div id="menu_div">
     <ul id="recent_entries">
       <!-- AJAX-load the list here. -->
+      <li>Foo</li>
+      <li>Bar</li>
     </ul>
+  </div>
+  <div>
+    <p>This is some other random text on the side of things. I'm just typing a few sentences so that I can properly see how things wrap and expand.</p>
+    <p>This is some other random text on the side of things. I'm just typing a few sentences so that I can properly see how things wrap and expand.</p>
+  </div>
+
+  <p>This post was tagged under:</p>
+  <div id="tags_div">
+     <ul>
+        {% for tag in post_tags %}
+        <li><a href="/static/{{ tag }}.html">{{ tag }}</a></li>
+        {% endfor %}
+      </ul>
   </div>
 </div>
