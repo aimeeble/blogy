@@ -10,16 +10,24 @@ import os
 
 
 @task(ignore_results=True)
-def process_pending_posts_task():
-   """Task to process next post.
+def process_pending_posts_task(entrypk=None):
+   """Task to process posts.
 
-   This will be run in time for processing the next pending post.  Processing
-   will use the same code as post_save_handler, which is used for non
-   post-dated posts.
+   This is where all processing of post markdown to HTML is kicked off from.
+   If entrypk is specified, we will only generate that entry.  If it is None,
+   we will generate all posts which should but have not yet been processed.
    """
    print "Processing..."
-   now = timezone.now()
-   entries = Entry.objects.filter(post__lte=now)
+
+   if entrypk:
+      entry = Entry.objects.get(pk=entrypk)
+      if not entry:
+         raise Exception("invalid pk %s" % entrypk)
+      entries = [entry]
+   else:
+      now = timezone.now()
+      entries = Entry.objects.filter(post__lte=now)
+
    for entry in entries:
       filename = get_static_filename(entry)
       if not os.path.exists(filename):

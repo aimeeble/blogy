@@ -14,7 +14,7 @@ from blogy.process import delete_static_file
 @receiver(post_save, sender=Entry)
 def entry_post_save_handler(sender, instance, **kwargs):
    # Handle this asyncly via a Celery task
-   process_pending_posts_task.delay()
+   process_pending_posts_task.delay(instance.id)
    generate_main_index_task.delay()
 
 
