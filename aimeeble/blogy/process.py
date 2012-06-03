@@ -85,11 +85,13 @@ class StaticEntry(object):
 
       md = Markdown(["abbr", "def_list"])
       post_html = md.convert(self.entry.markdown)
+      post_tags = map(lambda x: x.name, self.entry.tags.all())
 
       t = loader.get_template("entry.html")
       c = Context({
          "post_title": self.entry.title,
          "post_body": post_html,
+         "post_tags": post_tags,
       })
       full_html = t.render(c)
 
@@ -152,5 +154,3 @@ class StaticIndex(object):
       _ensure_path(os.path.dirname(filename))
       with open(filename, "w+") as f:
          f.write(full_html)
-
-
