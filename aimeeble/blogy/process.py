@@ -92,6 +92,7 @@ class StaticEntry(object):
          "post_title": self.entry.title,
          "post_body": post_html,
          "post_tags": post_tags,
+         "post_date": self.entry.post,
       })
       full_html = t.render(c)
 
