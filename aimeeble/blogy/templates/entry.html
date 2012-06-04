@@ -15,8 +15,22 @@
   {% include "header.html" %} {% include "sidebar.html" %}
 
   <div class="centered_column">
+
+     <div id="post_head_div">
+        <div id="posted_on_div">
+         <span id="posted_on_month_div">{{ post_date|date:"M" }}</span>
+         <span id="posted_on_day_div">{{ post_date|date:"d" }}</span>
+        </div>
+        <h1 id="post_title_div">{{ post_title }}</h1>
+        <div id="below_post">&nbsp;</div>
+     </div>
+
     <div id="post_div" class="textblock">
       {% autoescape off %} {{ post_body }} {% endautoescape %}
+
+      <span id="post_details_div">
+         Posted on {{ post_date|date:"Y-m-d" }}
+      </span>
     </div>
 
     <div class="textblock" id="about_div">
