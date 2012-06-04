@@ -1,0 +1,137 @@
+body {
+   font-family: minion-pro, museo-sans, "Lucida Grande", serif !important;
+   background: #ddd;
+   margin: 0px;
+}
+
+#header_div {
+   padding-top: 10px;
+}
+
+#fixedbar {
+   width: 100%;
+   display: block;
+   background: #ff9ce8;
+   padding: 10px;
+
+   -moz-box-shadow: 0px 3px 0px 1px #ccc;
+   -webkit-box-shadow: 0px 3px 0px 1px #ccc;
+   box-shadow: 0px 3px 0px 1px #ccc;
+}
+
+.centered_column {
+   max-width: 650px;
+   margin: 20px;
+   padding: 20px;
+}
+
+.centered_column, #sidebar_div {
+   border: 1px solid #aaa;
+   background: #fff;;
+
+   -moz-box-shadow: 5px 5px 0px 1px #ccc;
+   -webkit-box-shadow: 5px 5px 0px 1px #ccc;
+   box-shadow: 5px 5px 2px 0px #ccc;
+}
+
+#sidebar_div {
+   position: absolute;
+   margin-left: 750px;
+   margin-top: 20px;
+   width: 200px;
+   background: #fff;
+   border: 1px solid #aaa;
+}
+
+#sidebar_div p {
+   padding-left: 10px;
+   padding-right: 10px;
+}
+
+.textblock {
+   font-size: 18px;
+   line-height: 1.5;
+   border-bottom: 1px solid #aaa;
+   margin-bottom: 1em;
+   padding-bottom: 1em;
+   text-align: justify;
+}
+
+.textblock blockquote {
+   display: block;
+   border: 1px solid #f0f0f0;
+   background: #eee;
+   padding: 25px;
+}
+
+.textblock code {
+   border: 1px solid #f0f0f0;
+   background: #eee;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-top: 2px;
+   padding-bottom: 2px;
+}
+
+.left_float_img {
+   float: left;
+   clear: both;
+   padding: 5px;
+}
+
+a .left_float_img {
+   text-decoration: none;
+}
+
+#post_head_div {
+   padding-left: 1em;
+   padding-right: 1em;
+   padding-top: 5px;
+   border-bottom: 1px solid #aaa;
+   background: #ff0;
+}
+
+#post_title_div {
+   margin: 0px;
+   padding-bottom: 0;
+   font-size: 16pt;
+   background: #0ff;
+}
+
+#below_post {
+   background: #00f;
+   clear: both;
+}
+
+#posted_on_div {
+   float: right;
+   min-width: 3em;
+   text-align: center;
+}
+
+#posted_on_month_div {
+   background: #f02020;
+   display: block;
+   border-top-left-radius: 5px;
+   border-top-right-radius: 5px;
+   -moz-border-top-left-radius: 5px;
+   -moz-border-top-right-radius: 5px;
+   min-height: 1.3em;
+}
+@media print {
+   #posted_on_month_div {
+      background: #fff;
+      border: 1px solid #ddd;
+   }
+}
+
+#posted_on_day_div {
+   background: #fff;
+   display: block;
+   padding-top: 0.5em;
+   padding-bottom: 0.5em;
+   font-weight: bold;
+   border-bottom: 1px solid #ddd;
+   border-left: 1px solid #ddd;
+   border-right: 1px solid #ddd;
+}
