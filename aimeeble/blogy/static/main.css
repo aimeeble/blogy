@@ -1,3 +1,6 @@
+/*background: #8875FF;*/
+/*background: #ffe382;*/
+
 body {
    font-family: minion-pro, museo-sans, "Lucida Grande", serif !important;
    background: #ddd;
@@ -6,17 +9,68 @@ body {
 
 #header_div {
    padding-top: 10px;
+   background: #ffe382;
+}
+
+#blog_title {
+   font-family: 'Oleo Script', cursive;
+   font-weight: bold;
+   display: block;
+   margin-left: 2em;
+   font-size: 3em;
+   height: 2em;
+}
+#blog_title.sticky {
+   position: fixed;
+   top: 0px;
+   z-index: 3;
+}
+
+#padtitle {
+   height: 0px;
+   visibility: hidden;
+}
+#padtitle.sticky {
+   font-family: 'Oleo Script', cursive;
+   font-weight: bold;
+   display: block;
+   margin-left: 2em;
+   height: 2em;
+   font-size: 3em;
+   visibility: visible;
+}
+
+#search_div {
+   width: 90%;
+   text-align: right;
 }
 
 #fixedbar {
-   width: 100%;
+   background: #aaa;
    display: block;
-   background: #ff9ce8;
    padding: 10px;
+   height: 2em;
 
    -moz-box-shadow: 0px 3px 0px 1px #ccc;
    -webkit-box-shadow: 0px 3px 0px 1px #ccc;
    box-shadow: 0px 3px 0px 1px #ccc;
+}
+#fixedbar.sticky {
+   position: fixed;
+   z-index: 2;
+   top: 0px;
+   width: 100%;
+}
+
+#pad1 {
+   height: 0px;
+   visibility: hidden;
+}
+#pad1.sticky {
+   background: #f00;
+   visibility: visible;
+   padding: 10px;
+   height: 2em;
 }
 
 .centered_column {
@@ -57,20 +111,44 @@ body {
    text-align: justify;
 }
 
+.textblock h1 {
+   font-size: 24px;
+   font-weight: bold;
+}
+.textblock h2 {
+   font-size: 18px;
+   font-weight: bold;
+}
+.textblock h3 {
+   font-size: 18px;
+   font-weight: normal;
+}
+
 .textblock blockquote {
    display: block;
-   border: 1px solid #f0f0f0;
+   border: 1px solid #ddd;
    background: #eee;
    padding: 25px;
 }
 
 .textblock code {
-   border: 1px solid #f0f0f0;
+   border: 1px solid #ddd;
    background: #eee;
    padding-left: 5px;
    padding-right: 5px;
    padding-top: 2px;
    padding-bottom: 2px;
+}
+
+.textblock pre {
+   border: 1px solid #ddd;
+   width: 100%;
+   overflow: scroll;
+   background: #eee;
+}
+.textblock pre code {
+   border: none;
+   padding: 0px;
 }
 
 .left_float_img {
@@ -88,18 +166,18 @@ a .left_float_img {
    padding-right: 1em;
    padding-top: 5px;
    border-bottom: 1px solid #aaa;
-   background: #ff0;
+/*   background: #ff0;*/
 }
 
 #post_title_div {
    margin: 0px;
    padding-bottom: 0;
    font-size: 16pt;
-   background: #0ff;
+/*   background: #0ff;*/
 }
 
 #below_post {
-   background: #00f;
+/*   background: #00f;*/
    clear: both;
 }
 
