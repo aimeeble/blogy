@@ -141,7 +141,7 @@ class StaticIndex(object):
       """Gets the HTML filename for this index.
 
       """
-      return os.path.join(settings.MEDIA_ROOT, "blog", self.filename)
+      return os.path.join(settings.MEDIA_ROOT, "blog", "tags", self.filename)
 
    def generate_html(self):
       filename = self._get_html_name()
