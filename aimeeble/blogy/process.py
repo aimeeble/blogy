@@ -97,7 +97,7 @@ def generate_static_content(instance):
       print "not generating for future post on %s" % (str(instance.post))
       return
 
-   md = Markdown()
+   md = Markdown(["abbr", "def_list"])
    post_html = md.convert(instance.markdown)
 
    t = loader.get_template("entry.html")
