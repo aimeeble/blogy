@@ -132,7 +132,7 @@ class StaticIndex(object):
       if tagname:
          self.entries = Entry.objects.filter(finished=True).filter(tags__name=tagname).order_by("-post")
          slugged_tagname = slugify(tagname)
-         self.filename = "%s.html" % slugged_tagname
+         self.filename = os.path.join("tags", "%s.html" % slugged_tagname)
       else:
          self.entries = Entry.objects.filter(finished=True).order_by("-post")
          self.filename = "index.html"
@@ -141,7 +141,7 @@ class StaticIndex(object):
       """Gets the HTML filename for this index.
 
       """
-      return os.path.join(settings.MEDIA_ROOT, "blog", "tags", self.filename)
+      return os.path.join(settings.MEDIA_ROOT, "blog", self.filename)
 
    def generate_html(self):
       filename = self._get_html_name()
