@@ -2,13 +2,39 @@
 <html>
 <head>
    <title>Aimee's Blog</title>
+   <script type="text/javascript" src="/static/jquery-1.7.2.min.js"></script>
+   <link rel="stylesheet" type="text/css" href="/static/main.css"/>
+   <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Oleo+Script:400,700"/>
 </head>
 
 <body>
-   <ul>
-      {% for entry in entry_list %}
-      <li><a href="{{ STATIC_URL }}/static/{{ entry.post|date:"Y/m" }}/{{ entry.slug }}.html">{{ entry.title }}</a> -- {{ entry.post }}</li>
+   {% include "header.html" %}
+   {% include "index_sidebar.html" %}
+
+   <div class="centered_column">
+      {% regroup entry_list by post|date:"Y-m" as grouped_entries %}
+      {% for groupobj in grouped_entries %}
+      <div class="date_group">
+         {{ groupobj.grouper }}
+      </div>
+
+      {% for entry in groupobj.list %}
+      <div class="entry_list_item">
+         <div class="calendar">
+            <span>{{ entry.post|date:"M" }}</span>
+            <span>{{ entry.post|date:"d" }}</span>
+         </div>
+         <a href="{{ STATIC_URL }}/static/{{ entry.post|date:"Y/m" }}/{{ entry.slug }}.html"><h1>{{ entry.title }}</h1></a>
+         <div class="entry_list_details">
+            <span>{{ entry.post }}<span>
+            <span>~{{ entry.markdown|wordcount }} words</span>
+         </div>
+
+         <div class="below_post">&nbsp;</div>
+      </div>
       {% endfor %}
-   </ul>
+      {% endfor %}
+   </div>
+
 </body>
 </html>

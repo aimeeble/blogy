@@ -223,3 +223,40 @@ a .left_float_img {
    border-left: 1px solid #ddd;
    border-right: 1px solid #ddd;
 }
+
+.entry_list_item {
+   margin-bottom: 1em;
+   border: 1px solid #ddd;
+   padding: 5px;
+}
+
+.entry_list_details span {
+   display: block;
+}
+
+.entry_list_item > a {
+   text-decoration: none;
+}
+
+.entry_list_item h1 {
+   margin: 0px;
+   padding-bottom: 0;
+   font-size: 16pt;
+}
+
+.entry_list_item > .calendar {
+   float: right;
+}
+
+.date_group {
+   font-weight: bold;
+   margin-top: 2em;
+   margin-bottom: 5px;
+   padding: 5px;
+   background: #8875FF;
+
+   margin-left: -5px;
+   margin-right: -5px;
+   border-radius: 07px;
+   -moz-border-radius: 07px;
+}
