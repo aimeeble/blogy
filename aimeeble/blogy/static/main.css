@@ -1,5 +1,5 @@
-/*background: #8875FF;*/
-/*background: #ffe382;*/
+/*background: #8875FF; blueishpurple*/
+/*background: #ffe382; yellow*/
 
 body {
    font-family: minion-pro, museo-sans, "Lucida Grande", serif !important;
@@ -188,7 +188,7 @@ a .left_float_img {
    clear: both;
 }
 
-#posted_on_div {
+.post_head .calendar {
    float: right;
 }
 

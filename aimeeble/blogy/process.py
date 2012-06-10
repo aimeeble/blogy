@@ -1,4 +1,5 @@
 from blogy.models import Entry
+from blogy.models import Tag
 from django.conf import settings
 from django.template import Context
 from django.template import loader
@@ -146,9 +147,12 @@ class StaticIndex(object):
       filename = self._get_html_name()
       print "Generating %s" % (filename)
 
+      tags = Tag.objects.all()
+
       t = loader.get_template("index.html")
       c = Context({
          "entry_list": self.entries,
+         "tags": tags,
       })
       full_html = t.render(c)
 
