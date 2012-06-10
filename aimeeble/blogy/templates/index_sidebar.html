@@ -4,7 +4,7 @@
       <ul>
       <li><a href="/static/index.html">main index</a></li>
       {% for tag in tags %}
-      <li><a href="/static/{{ tag }}.html">{{ tag }}</a></li>
+      <li><a href="/static/tags/{{ tag|slugify }}.html">{{ tag }}</a></li>
       {% endfor %}
    </ul>
    </div>

@@ -15,7 +15,7 @@
    <div class="tags">
       <ul>
          {% for tag in post_tags %}
-         <li><a href="/static/{{ tag }}.html">{{ tag }}</a></li>
+         <li><a href="/static/tags/{{ tag|slugify }}.html">{{ tag }}</a></li>
          {% endfor %}
          </ul>
    </div>
