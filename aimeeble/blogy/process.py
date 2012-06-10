@@ -5,110 +5,152 @@ from django.template import loader
 from django.utils import timezone
 from markdown import Markdown
 import os
+import errno
 from django.template.defaultfilters import slugify
 
 
-def _generate_static_index(entry_list, filename):
-   print "Generating %s" % (filename)
-
-   t = loader.get_template("index.html")
-   c = Context({
-      "entry_list": entry_list,
-   })
-   full_html = t.render(c)
-
-   with open(filename, "w+") as f:
-      f.write(full_html)
-
-
-def generate_static_index():
-   entry_list = Entry.objects.all().order_by("-post")
-   abs_filename = os.path.join(settings.MEDIA_ROOT, "blog", "index.html")
-   _generate_static_index(entry_list, abs_filename)
-
-
-def generate_static_tag_index(tag_name):
-   entry_list = Entry.objects.filter(tags__name=tag_name).order_by("-post")
-   slugged_tag_name = slugify(tag_name)
-   abs_filename = os.path.join(settings.MEDIA_ROOT, "blog", "%s.html" % slugged_tag_name)
-   _generate_static_index(entry_list, abs_filename)
-
-
-def get_static_filename(entry):
-   """Gets the absolute filename of the entry's static HTML file.
-
-   """
-   posted = timezone.localtime(entry.post)
-
-   filename = "%s.html" % (entry.slug)
-   path = os.path.join(settings.MEDIA_ROOT,
-                           "blog",
-                           "%4u" % (posted.year),
-                           "%02u" % (posted.month),
-                           "%02u" % (posted.day))
-   abs_filename = os.path.join(path, filename)
-
+def _ensure_path(path):
    try:
       os.makedirs(path)
    except OSError, e:
-      pass
-
-   return abs_filename
-
-
-def delete_static_file(entry):
-   """Delete the HTML file associated with entry.
-
-   """
-   abs_filename = get_static_filename(entry)
-
-   print "Unlinking %s" % (abs_filename)
-   try:
-      os.unlink(abs_filename)
-   except OSError, e:
-      print "failure: %s" % (str(e))
+      if e.errno != errno.EEXIST:
+         raise e
 
 
-def cleanup_static_content(instance):
-   """Cleans up generated files.
+class StaticEntry(object):
+   def __init__(self, entry):
+      self.entry = entry
 
-   Delete the static HTML file if it already exists.  This does two main
-   things, 1) if the slug changes, this ensures the old file is removed before
-   we re-generate into the new slug file, and 2) handles hiding a HTML file if
-   the post-date has been changed to be in the future (invisible until the date
-   specified).
+   def _get_symlink_name(self):
+      """Gets the symlink filename for this entry.
 
-   """
-   if not instance.id:
-      return
-   old = Entry.objects.get(pk=instance.id)
-   delete_static_file(old)
+      """
+      posted = timezone.localtime(self.entry.post)
+
+      filename = "%s.html" % (self.entry.slug)
+      path = os.path.join(settings.MEDIA_ROOT,
+                              "blog",
+                              "%4u" % (posted.year),
+                              "%02u" % (posted.month))
+      abs_filename = os.path.join(path, filename)
+      return abs_filename
+
+   def _get_html_name(self):
+      """Gets the actual HTML filename for this entry.
+
+      """
+      filename = "%s.html" % (self.entry.guid)
+      path = os.path.join(settings.MEDIA_ROOT,
+                          "blog",
+                          "posts")
+      abs_filename = os.path.join(path, filename)
+      return abs_filename
+
+   def delete_html(self):
+      filename = self._get_html_name()
+      try:
+         os.unlink(filename)
+      except OSError, e:
+         if e.errno == errno.ENOENT:
+            print "failure: %s" % (str(e))
+         else:
+            raise e
+
+   def delete_symlink(self):
+      filename = self._get_symlink_name()
+      try:
+         os.unlink(filename)
+      except OSError, e:
+         if e.errno == errno.ENOENT:
+            print "failure: %s" % (str(e))
+         else:
+            raise e
+
+   def generate_html(self):
+      """Generate the static HTML file for an entry.
+
+      This will create the static HTML file which represents the post itself.
+      The entry's markdown source is converted into HTML and sandwiched with
+      the template head/foot then saved to a URL based upon the entry's slug.
+
+      """
+      filename = self._get_html_name()
+
+      if os.path.exists(filename):
+         print "Already done %s" % filename
+         return
+
+      print "Generating %s" % (filename)
+      _ensure_path(os.path.dirname(filename))
+
+      md = Markdown(["abbr", "def_list"])
+      post_html = md.convert(self.entry.markdown)
+
+      t = loader.get_template("entry.html")
+      c = Context({
+         "post_title": self.entry.title,
+         "post_body": post_html,
+      })
+      full_html = t.render(c)
+
+      with open(filename, "w+") as f:
+         f.write(full_html)
+
+   def symlink(self):
+      """This will symlink the post into place.
+
+      Note that this only creates a symlink if both finished=True and
+      now>posted.
+
+      """
+      if not self.entry.finished:
+         print "not generating for unfinished post on %s" % (str(self.entry.slug))
+         return
+
+      html_name = self._get_html_name()
+      html_name = os.path.abspath(html_name)
+      link_name = self._get_symlink_name()
+
+      _ensure_path(os.path.dirname(link_name))
+
+      print "Symlinking %s to %s" % (link_name, html_name)
+      try:
+         os.symlink(html_name, link_name)
+      except OSError, e:
+         if e.errno == errno.EEXIST:
+            print "failure: %s" % (str(e))
+         else:
+            raise e
 
 
-def generate_static_content(instance):
-   """Generate the static HTML file for an entry.
+class StaticIndex(object):
+   def __init__(self, tagname=None):
+      if tagname:
+         self.entries = Entry.objects.filter(finished=True).filter(tags__name=tagname).order_by("-post")
+         slugged_tagname = slugify(tagname)
+         self.filename = "%s.html" % slugged_tagname
+      else:
+         self.entries = Entry.objects.filter(finished=True).order_by("-post")
+         self.filename = "index.html"
 
-   This will create the static HTML file which represents the post itself.  The
-   instance's markdown source is converted into HTML and sandwiched with the
-   template head/foot then saved to a URL based upon the instance's slug.
+   def _get_html_name(self):
+      """Gets the HTML filename for this index.
 
-   """
-   if not instance.posted():
-      print "not generating for future post on %s" % (str(instance.post))
-      return
+      """
+      return os.path.join(settings.MEDIA_ROOT, "blog", self.filename)
 
-   md = Markdown(["abbr", "def_list"])
-   post_html = md.convert(instance.markdown)
+   def generate_html(self):
+      filename = self._get_html_name()
+      print "Generating %s" % (filename)
 
-   t = loader.get_template("entry.html")
-   c = Context({
-      "post_title": instance.title,
-      "post_body": post_html,
-   })
-   full_html = t.render(c)
+      t = loader.get_template("index.html")
+      c = Context({
+         "entry_list": self.entries,
+      })
+      full_html = t.render(c)
 
-   abs_filename = get_static_filename(instance)
+      _ensure_path(os.path.dirname(filename))
+      with open(filename, "w+") as f:
+         f.write(full_html)
 
-   with open(abs_filename, "w+") as f:
-      f.write(full_html)
-   print "Generating %s" % (abs_filename)
+

@@ -1,10 +1,8 @@
 from celery.task import task
 from blogy.models import Entry
 from blogy.models import Tag
-from blogy.process import get_static_filename
-from blogy.process import generate_static_content
-from blogy.process import generate_static_index
-from blogy.process import generate_static_tag_index
+from blogy.process import StaticEntry
+from blogy.process import StaticIndex
 from django.utils import timezone
 import os
 
@@ -23,16 +21,15 @@ def process_pending_posts_task(entrypk=None):
       entry = Entry.objects.get(pk=entrypk)
       if not entry:
          raise Exception("invalid pk %s" % entrypk)
-      entries = [entry]
+      entries = [StaticEntry(entry)]
    else:
       now = timezone.now()
-      entries = Entry.objects.filter(post__lte=now)
+      raw_entries = Entry.objects.filter(finished=True).filter(post__lte=now)
+      entries = [StaticEntry(x) for x in raw_entries]
 
    for entry in entries:
-      filename = get_static_filename(entry)
-      if not os.path.exists(filename):
-         print "processing '%s'" % (entry.slug)
-         generate_static_content(entry)
+      entry.generate_html()
+      entry.symlink()
 
 
 @task(ignore_results=True)
@@ -41,7 +38,8 @@ def generate_main_index_task():
 
    """
    print "Generating indexes..."
-   generate_static_index()
+   idx = StaticIndex()
+   idx.generate_html()
 
 
 @task(ignore_results=True)
@@ -54,5 +52,7 @@ def generate_tag_index_task(tags=None):
    if not tags:
       tags = map(lambda x: x.name, Tag.objects.all())
    print "Generating indexes for %s..." % (", ".join(tags))
+
    for tag in tags:
-      generate_static_tag_index(tag)
+      idx = StaticIndex(tag)
+      idx.generate_html()

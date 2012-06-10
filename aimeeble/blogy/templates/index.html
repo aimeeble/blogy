@@ -10,7 +10,7 @@
 <body>
    <ul>
       {% for entry in entry_list %}
-      <li><a href="{{ STATIC_URL }}/static/{{ entry.post|date:"Y/m/d" }}/{{ entry.slug }}.html">{{ entry.title }}</a> -- {{ entry.post }}</li>
+      <li><a href="{{ STATIC_URL }}/static/{{ entry.post|date:"Y/m" }}/{{ entry.slug }}.html">{{ entry.title }}</a> -- {{ entry.post }}</li>
       {% endfor %}
    </ul>
 </body>

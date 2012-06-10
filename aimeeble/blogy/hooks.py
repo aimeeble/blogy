@@ -7,8 +7,7 @@ from django.db.models.signals import m2m_changed
 from blogy.tasks import process_pending_posts_task
 from blogy.tasks import generate_main_index_task
 from blogy.tasks import generate_tag_index_task
-from blogy.process import cleanup_static_content
-from blogy.process import delete_static_file
+from blogy.process import StaticEntry
 
 
 @receiver(post_save, sender=Entry)
@@ -20,12 +19,21 @@ def entry_post_save_handler(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Entry)
 def entry_pre_save_handler(sender, instance, **kwargs):
-   cleanup_static_content(instance)
+   # serach for ourself--we want to refer to old names in the event they have
+   # been changed in the instance object we were given.
+   if instance.id:
+      old = Entry.objects.get(pk=instance.id)
+      static_entry = StaticEntry(old)
+      static_entry.delete_symlink()
+      static_entry.delete_html()
 
 
 @receiver(pre_delete, sender=Entry)
 def entry_delete_handler(sender, instance, **kwargs):
-   delete_static_file(instance)
+   static_entry = StaticEntry(instance)
+   static_entry.delete_symlink()
+   static_entry.delete_html()
+
    generate_main_index_task.delay()
    tags = map(lambda x: x.name, instance.tags.all())
    generate_tag_index_task.delay(tags)
