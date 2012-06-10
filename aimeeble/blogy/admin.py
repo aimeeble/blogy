@@ -3,21 +3,20 @@ from blogy.models import Entry
 from django.contrib import admin
 
 class EntryAdmin(admin.ModelAdmin):
-   readonly_fields = ["created", "modified"]
+   readonly_fields = ["created", "modified", "guid"]
    fieldsets = [
          ("Dates", {
-            "fields": ["created", "modified", "post"],
-            "classes": ["collapse"],
+            "fields": ["created", "modified", "post", "finished"],
          }),
          ("Content", {
             "fields": ["title", "markdown"],
          }),
          ("Misc", {
-            "fields": ["slug", "posted_by", "tags"],
+            "fields": ["slug", "guid", "posted_by", "tags"],
             "classes": ["collapse"],
          }),
       ]
-   list_display = ("title", "posted", "post", "posted_by", "get_tags")
+   list_display = ("title", "finished", "post", "posted_by", "get_tags")
    prepopulated_fields = {
          "slug": ["title"],
       }

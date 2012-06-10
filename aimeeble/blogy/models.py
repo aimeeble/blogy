@@ -2,14 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.template.defaultfilters import slugify
+import uuid
 
-# Create your models here.
+
+def make_uuid():
+   return str(uuid.uuid4())
+
 
 class Tag(models.Model):
    name = models.CharField(max_length=255)
 
    def __unicode__(self):
       return "%s" % (self.name)
+
 
 class Entry(models.Model):
    """A blog entry's metadata.
@@ -23,26 +28,22 @@ class Entry(models.Model):
 
    # what
    title = models.CharField(max_length=255)
-   markdown = models.TextField()
+   markdown = models.TextField(help_text="Entry's main text in Markdown syntax")
+   guid = models.TextField(max_length=36, editable=False, default=make_uuid)
 
    # when
    created = models.DateTimeField('Date created', auto_now_add=True)
    modified = models.DateTimeField('Last Modified Date', auto_now=True)
-   post = models.DateTimeField('Post Date', default=timezone.now)
+   post = models.DateTimeField('Post Date', default=timezone.now, help_text="Date on which this entry should be auto-posted (requires finished=True)")
+
+   # If false, no symlink into place; will not appear in index.
+   finished = models.BooleanField(default=False, help_text="Is this post finished? If not finished, it is only available privately by GUID.")
 
    # who
    posted_by = models.ForeignKey(User)
 
    # random tags we are tagged with
    tags = models.ManyToManyField('Tag', blank=True)
-
-   def posted(self):
-      """Returns true if this has been posted (false = future post).
-      """
-      return self.post <= timezone.now()
-   posted.admin_order_field = 'post'
-   posted.boolean = True
-   posted.short_description = 'Posted'
 
    def get_tags(self):
       """Returns a comma-separated list of tags for this post.
