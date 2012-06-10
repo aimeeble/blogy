@@ -13,12 +13,12 @@
    {% include "sidebar.html" %}
 
    <div class="centered_column">
-      <div id="post_head_div">
-         <div id="posted_on_div">
-            <span id="posted_on_month_div">{{ post_date|date:"M" }}</span>
-            <span id="posted_on_day_div">{{ post_date|date:"d" }}</span>
+      <div class="post_head">
+         <div id="posted_on_div" class="calendar">
+            <span>{{ post_date|date:"M" }}</span>
+            <span>{{ post_date|date:"d" }}</span>
          </div>
-         <h1 id="post_title_div">{{ post_title }}</h1>
+         <h1>{{ post_title }}</h1>
          <div id="below_post">&nbsp;</div>
       </div>
 

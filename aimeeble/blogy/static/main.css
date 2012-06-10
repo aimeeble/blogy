@@ -161,7 +161,7 @@ a .left_float_img {
    text-decoration: none;
 }
 
-#post_head_div {
+.post_head {
    padding-left: 1em;
    padding-right: 1em;
    padding-top: 5px;
@@ -169,11 +169,18 @@ a .left_float_img {
 /*   background: #ff0;*/
 }
 
-#post_title_div {
+.post_head h1 {
    margin: 0px;
    padding-bottom: 0;
    font-size: 16pt;
 /*   background: #0ff;*/
+}
+
+.post_head h2 {
+   margin: 0;
+   padding-bottom: 0;
+   font-size: 12pt;
+   font-weight: normal;
 }
 
 #below_post {
@@ -183,11 +190,14 @@ a .left_float_img {
 
 #posted_on_div {
    float: right;
+}
+
+.calendar {
    min-width: 3em;
    text-align: center;
 }
 
-#posted_on_month_div {
+.calendar > span:first-child {
    background: #f02020;
    display: block;
    border-top-left-radius: 5px;
@@ -197,13 +207,13 @@ a .left_float_img {
    min-height: 1.3em;
 }
 @media print {
-   #posted_on_month_div {
+   .calendar > span:first-child {
       background: #fff;
       border: 1px solid #ddd;
    }
 }
 
-#posted_on_day_div {
+.calendar > span + span {
    background: #fff;
    display: block;
    padding-top: 0.5em;
