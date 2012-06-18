@@ -38,6 +38,7 @@ class Entry(models.Model):
 
    # If false, no symlink into place; will not appear in index.
    finished = models.BooleanField(default=False, help_text="Is this post finished? If not finished, it is only available privately by GUID.")
+   rendered = models.BooleanField(default=False, help_text="internal: Has the post been rendered to HTML yet?")
 
    # who
    posted_by = models.ForeignKey(User)

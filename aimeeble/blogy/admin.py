@@ -6,7 +6,7 @@ class EntryAdmin(admin.ModelAdmin):
    readonly_fields = ["created", "modified", "guid"]
    fieldsets = [
          ("Dates", {
-            "fields": ["created", "modified", "post", "finished"],
+            "fields": ["created", "modified", "post", "finished", "rendered"],
          }),
          ("Content", {
             "fields": ["title", "markdown"],
