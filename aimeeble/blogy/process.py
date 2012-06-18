@@ -77,10 +77,6 @@ class StaticEntry(object):
       """
       filename = self._get_html_name()
 
-      if os.path.exists(filename):
-         print "Already done %s" % filename
-         return
-
       print "Generating %s" % (filename)
       _ensure_path(os.path.dirname(filename))
 
@@ -107,10 +103,6 @@ class StaticEntry(object):
       now>posted.
 
       """
-      if not self.entry.finished:
-         print "not symlinking for unfinished post on %s" % (str(self.entry.slug))
-         return
-
       html_name = self._get_html_name()
       html_name = os.path.abspath(html_name)
       link_name = self._get_symlink_name()
