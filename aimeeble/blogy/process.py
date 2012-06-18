@@ -129,12 +129,14 @@ class StaticEntry(object):
 
 class StaticIndex(object):
    def __init__(self, tagname=None):
+      now = timezone.now()
+
       if tagname:
-         self.entries = Entry.objects.filter(finished=True).filter(tags__name=tagname).order_by("-post")
+         self.entries = Entry.objects.filter(finished=True, post__lte=now, tags__name=tagname).order_by("-post")
          slugged_tagname = slugify(tagname)
          self.filename = os.path.join("tags", "%s.html" % slugged_tagname)
       else:
-         self.entries = Entry.objects.filter(finished=True).order_by("-post")
+         self.entries = Entry.objects.filter(finished=True, post__lte=now).order_by("-post")
          self.filename = "index.html"
 
    def _get_html_name(self):

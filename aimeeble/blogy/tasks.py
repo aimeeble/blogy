@@ -24,7 +24,7 @@ def process_pending_posts_task(entrypk=None):
       entries = [StaticEntry(entry)]
    else:
       now = timezone.now()
-      raw_entries = Entry.objects.filter(finished=True).filter(post__lte=now)
+      raw_entries = Entry.objects.filter(finished=True, post__lte=now)
       entries = [StaticEntry(x) for x in raw_entries]
 
    for entry in entries:
