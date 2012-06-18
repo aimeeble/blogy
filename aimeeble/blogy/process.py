@@ -108,7 +108,7 @@ class StaticEntry(object):
 
       """
       if not self.entry.finished:
-         print "not generating for unfinished post on %s" % (str(self.entry.slug))
+         print "not symlinking for unfinished post on %s" % (str(self.entry.slug))
          return
 
       html_name = self._get_html_name()
