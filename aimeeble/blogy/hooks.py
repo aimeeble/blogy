@@ -15,9 +15,13 @@ def entry_pre_save_handler(sender, instance, **kwargs):
    # been changed in the instance object we were given.
    if instance.id:
       old = Entry.objects.get(pk=instance.id)
-      static_entry = StaticEntry(old)
-      static_entry.delete_symlink()
-      static_entry.delete_html()
+      old_static_entry = StaticEntry(old)
+
+      if instance.slug != old.slug or not instance.finished:
+         old_static_entry.delete_symlink()
+      if instance.markdown != old.markdown:
+         print "content changed, flagging for re-render"
+         instance.rendered = False
 
 
 @receiver(pre_delete, sender=Entry)
@@ -26,6 +30,7 @@ def entry_delete_handler(sender, instance, **kwargs):
    static_entry.delete_symlink()
    static_entry.delete_html()
 
+   # and now the indexes
    generate_main_index_task.delay()
    tags = map(lambda x: x.name, instance.tags.all())
    generate_tag_index_task.delay(tags)
