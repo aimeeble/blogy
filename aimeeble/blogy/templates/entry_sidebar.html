@@ -14,6 +14,7 @@
    <p>This post was tagged under:</p>
    <div class="tags">
       <ul>
+         <li><a href="/static/index.html">everything</a></li>
          {% for tag in post_tags %}
          <li><a href="/static/tags/{{ tag|slugify }}.html">{{ tag }}</a></li>
          {% endfor %}
